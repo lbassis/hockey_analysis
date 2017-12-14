@@ -11,6 +11,9 @@ library(ggplot2)
 
 ```{r}
   teamsDf <- read.csv("professional-hockey-database/Teams.csv");
+  teamsDf <- teamsDf %>% group_by(tmID) %>% summarise(W = sum(W), L = sum(L), G=sum(G))
+
+  teamsDf
 ```
 
 # Victory count
@@ -67,4 +70,12 @@ If we consider that the only negative result a team might have is a loss, we cou
   bestLossRatio %>% ggplot(aes(tmID, LossRatio)) + 
   geom_bar(stat="identity", position="dodge") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+```
+
+
+Now we have three tables with meaningful results: 25% of the teams that won the most, that won the most considering the amount of games and that loss the least considering the amount of games. We can combine them and find which teams are in all of them.
+
+```{r}
+mostWins %>% select(tmID) %>% semi_join(bestWinRatio %>% select(tmID)) %>% semi_join(bestLossRatio %>% select(tmID))
+
 ```
