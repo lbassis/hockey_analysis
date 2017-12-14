@@ -3,26 +3,68 @@ title: "Analysis"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r}
+library(magrittr)
+library(dplyr)
+library(ggplot2)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+  teamsDf <- read.csv("professional-hockey-database/Teams.csv");
 ```
 
-## Including Plots
+# Victory count
 
-You can also embed plots, for example:
+The first and easier analysis to do is check the team who won the most games.
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r, fig.height=15}
+  teamsDf %>%
+  ggplot(aes(tmID, W)) + 
+  geom_bar(stat="identity", position="dodge") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  coord_flip()
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Plotting all the teams makes the graph too big and hard to read, so we might just get around 25% of the teams who won the most.
+
+```{r}
+  count <- nrow(teamsDf)
+  subsetSize <- count*0.25
+  mostWins <- teamsDf %>% arrange(-W) %>% tibble::rowid_to_column("rowNumber") %>% filter(rowNumber<subsetSize)
+  
+  mostWins %>% ggplot(aes(tmID, W)) + 
+  geom_bar(stat="identity", position="dodge") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+```
+
+Having the teams with most wins is cool with our objective, but maybe it's a bit unfair. It seems to be a good idea to get the ratio between victories and losses in order to estimate the better team.
+
+```{r}
+  count <- nrow(teamsDf)
+  subsetSize <- count*0.25
+  bestWinRatio <- teamsDf %>% 
+  mutate(WinRatio = W/G) %>%
+  arrange(-WinRatio) %>% 
+  tibble::rowid_to_column("rowNumber") %>% 
+  filter(rowNumber<subsetSize)
+  
+  bestWinRatio %>% ggplot(aes(tmID, WinRatio)) + 
+  geom_bar(stat="identity", position="dodge") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+```
+
+If we consider that the only negative result a team might have is a loss, we could also get the losses ratio. In this case, we are taking ties as results as good as victories, but it's still an interesting metric.
+
+```{r}
+  count <- nrow(teamsDf)
+  subsetSize <- count*0.25
+  bestLossRatio <- teamsDf %>% 
+  mutate(LossRatio = L/G) %>%
+  arrange(LossRatio) %>% 
+  tibble::rowid_to_column("rowNumber") %>% 
+  filter(rowNumber<subsetSize)
+  
+  bestLossRatio %>% ggplot(aes(tmID, LossRatio)) + 
+  geom_bar(stat="identity", position="dodge") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+```
