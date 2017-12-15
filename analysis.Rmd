@@ -7,8 +7,10 @@ This analysis wants to find out the best team in NHL (because this is the league
 
 First, the basic functions to be used.
 ```{r}
+library(stats)
+library(base)
 library(magrittr)
-library(dplyr)
+library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
 
 teamName <- function(ID) {
@@ -19,6 +21,7 @@ teamName <- function(ID) {
 ```
 
 Here we load the dataframe to be used and some values that will be constants through the analysis.
+
 ```{r}
   teamsDf <- read.csv("professional-hockey-database/Teams.csv");
   teamsDf <- teamsDf %>% filter(lgID=="NHL") %>% group_by(tmID) %>% summarise(W = sum(W), L = sum(L), G=sum(G), GF=sum(GF), GA=sum(GA))
@@ -83,8 +86,8 @@ If we consider that the only negative result a team might have is a loss, we cou
 Now we have three tables with meaningful results: 25% of the teams that won the most, that won the most considering the amount of games and that loss the least considering the amount of games. We can combine them and find which teams are in all of them.
 
 ```{r}
-mostWinners <- mostWins %>% select(tmID) %>% semi_join(bestWinRatio %>% select(tmID)) %>% semi_join(bestLossRatio %>% select(tmID))
-mostWinners <- as.list(winners)
+mostWinners <- suppressMessages(mostWins %>% select(tmID) %>% semi_join(bestWinRatio %>% select(tmID)) %>% semi_join(bestLossRatio %>% select(tmID)))
+mostWinners <- as.list(mostWinners)
 mostWinners <- lapply(mostWinners[[1]], teamName) %>% unlist() %>% as.data.frame()
 mostWinners
 ```
@@ -125,3 +128,5 @@ coaches %>% group_by(tmID) %>% mutate(Awards = n()) %>% ggplot(aes(tmID, Awards)
   geom_bar(stat="identity", position="dodge") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 ```
+
+Well, finally a new possibility. The New York Rangers won 2 coach awards more than the invincible Montreal Canadiens. However, it's the only new team on the competition, if we keep analysing only the top 5. From now on, Philadelphia Flyers is out of the game.
