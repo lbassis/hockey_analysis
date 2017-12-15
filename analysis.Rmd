@@ -110,3 +110,18 @@ Another metric we might use is the amount of goals scored. More than that, we pr
 
 Well, this graph says a lot. The Montreal Canadiens team, which was already on our previous top 5, has more than twice the score of the second place, Boston Bruins. It may look interesting, but actually the entire top 5 from the previous session is here, so we might have not gained much more information.
 
+# Awarded coaches
+
+What is a team without its coach? Maybe we might find some nice results checking the amount of coach awards won by every team.
+
+```{r}
+
+coachesDf <- read.csv("professional-hockey-database/Coaches.csv") %>% select(coachID, tmID, year)
+coachesAwardedDf <- read.csv("professional-hockey-database/AwardsCoaches.csv") %>% select(coachID, year)
+
+coaches <- merge(coachesDf, coachesAwardedDf, by=c("year", "coachID"))
+
+coaches %>% group_by(tmID) %>% mutate(Awards = n()) %>% ggplot(aes(tmID, Awards)) + 
+  geom_bar(stat="identity", position="dodge") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+```
