@@ -1,5 +1,5 @@
 ---
-title: "Analysis"
+title: "Analysis - Best NHL Ice Hockey Team"
 output: pdf_document
 ---
 
@@ -47,7 +47,10 @@ The first and easier analysis to do is check the team who won the most games.
     ggplot(aes(tmID, W)) + 
     geom_bar(stat="identity", position="dodge", fill="orange") + 
     theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    coord_flip()
+    coord_flip() +
+    theme(axis.title=element_text(size=25)) +
+    xlab("Team") +
+    ylab("Games won")
 ```
 
 Plotting all the teams makes the graph too big and hard to read, so we might just get around 25% of the teams who won the most.
@@ -61,7 +64,10 @@ Plotting all the teams makes the graph too big and hard to read, so we might jus
   mostWins %>% 
     ggplot(aes(tmID, W)) + 
     geom_bar(stat="identity", position="dodge", fill="orange") + 
-    theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    theme(axis.title=element_text(size=12)) +
+    xlab("Team") +
+    ylab("Games won")
 
 ```
 
@@ -79,7 +85,10 @@ Having the teams with most wins/losses is cool with our objective, but maybe it'
   bestWinRatio %>% 
     ggplot(aes(tmID, WinRatio)) + 
     geom_bar(stat="identity", position="dodge", fill="orange") + 
-    theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    theme(axis.title=element_text(size=12)) +
+    xlab("Team") +
+    ylab("Victories/Game Ratio")
 ```
 
 If we consider that the only negative result a team might have is a loss, we could also get the losses ratio. In this case, we are taking ties as results as good as victories, but it's still an interesting metric.
@@ -94,7 +103,10 @@ If we consider that the only negative result a team might have is a loss, we cou
   bestLossRatio %>% 
     ggplot(aes(tmID, LossRatio)) + 
     geom_bar(stat="identity", position="dodge", fill="orange") + 
-    theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    theme(axis.title=element_text(size=12)) +
+    ylab("Losses/game Ratio") +
+    xlab("Team")
 ```
 
 
@@ -126,7 +138,10 @@ Another metric we might use is the amount of goals scored. More than that, we pr
   bestScore %>% 
     ggplot(aes(tmID, TotalScore)) + 
     geom_bar(stat="identity", position="dodge", fill="orange") + 
-    theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    theme(axis.title=element_text(size=12)) +
+    ylab("Total Score") +
+    xlab("Team")
 
 ```
 
@@ -151,7 +166,10 @@ coaches %>%
   ggplot(aes(tmID, Awards)) + 
   scale_y_discrete("Awards", limits=c(1, 3, 5, 7, 9)) +
   geom_bar(stat="identity", position="dodge", fill="orange") + 
-  theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(axis.title=element_text(size=12)) +
+  ylab("Awarded coaches") +
+  xlab("Team")
 ```
 
 Well, finally a new possibility. The New York Rangers won 2 coach awards more than the invincible Montreal Canadiens. However, it's the only new team on the competition, if we keep analysing only the top 5. From now on, Philadelphia Flyers is out of the game.
@@ -160,7 +178,7 @@ Well, finally a new possibility. The New York Rangers won 2 coach awards more th
 
 If we checked for the number of awards for the coaches, it's unfair to not check the players' as well. So, here it is:
 
-```{r, fig.width=8}
+```{r, fig.width=12}
 
 playersDf <- read.csv("professional-hockey-database/Scoring.csv") %>% 
   select(playerID, tmID, year)
@@ -176,7 +194,10 @@ players <- players %>%
 players %>% 
   ggplot(aes(tmID, Awards)) + 
   geom_bar(stat="identity", position="dodge", fill="orange") + 
-  theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  theme_wsj() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(axis.title=element_text(size=20)) +
+  ylab("Awarded players") +
+  xlab("Team")
 
 ```
 
